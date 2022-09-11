@@ -22,17 +22,23 @@ impl EventHandler for Handler {
             // authentication error, or lack of permissions to post in the
             // channel, so log to stdout when some error happens, with a
             // description of it.
-            
+
+            println!("Running Command: !get_bitcoin");
+            println!("Fetching bitcoin data...");
             
             let binance_api_responce = binance::get_crypto_price(&"BTC").await;
             let crypto_data = format!("{}: {}", binance_api_responce.symbol, binance_api_responce.price);
 
-            if let Err(why) = msg.channel_id.say(&ctx.http, crypto_data).await {
+            if let Err(why) = msg.channel_id.say(&ctx.http, &crypto_data).await {
                 println!("Error sending message: {:?}", why);
             }
+
+            println!("{:?}", &crypto_data);
         }
 
         if msg.content == "very pog" {
+            println!("Running Command: very pog");
+
             if let Err(why) = msg.channel_id.say(&ctx.http, "indeed").await {
                 println!("Error sending message: {:?}", why);
             }
