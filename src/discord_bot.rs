@@ -3,8 +3,13 @@ use serenity::model::channel::Message;
 use serenity::model::gateway::Ready;
 use serenity::prelude::*;
 
+use env_file_reader::read_file;
+
+use std::collections::HashMap;
+
 #[path = "binance.rs"]
 mod binance;
+
 
 struct Handler;
 
@@ -17,6 +22,10 @@ impl EventHandler for Handler {
     // Event handlers are dispatched through a threadpool, and so multiple
     // events can be dispatched simultaneously.
     async fn message(&self, ctx: Context, msg: Message) {
+        let env_variables: HashMap<String, String> = read_file(r".env").unwrap();
+
+        if msg.channel_id.as_ref().to_string() != env_variables["DISCORD_CHANNEL_ID"] {return;} // Locks the bot to one channel
+
         if msg.content == "!get_bitcoin" {
             // Sending a message can fail, due to a network error, an
             // authentication error, or lack of permissions to post in the
@@ -24,7 +33,11 @@ impl EventHandler for Handler {
             // description of it.
 
             println!("Running Command: !get_bitcoin");
+
             println!("Fetching bitcoin data...");
+            if let Err(why) = msg.channel_id.say(&ctx.http, "Fetching bitcoin data...").await {
+                println!("Error sending message: {:?}", why);
+            }
             
             let binance_api_responce: binance::BinanceApiResponce = binance::get_crypto_price(&"BTC").await;
             let crypto_data: String = format!("{}: {}", binance_api_responce.symbol, binance_api_responce.price);
