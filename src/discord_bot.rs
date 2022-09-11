@@ -3,6 +3,9 @@ use serenity::model::channel::Message;
 use serenity::model::gateway::Ready;
 use serenity::prelude::*;
 
+#[path = "binance.rs"]
+mod binance;
+
 struct Handler;
 
 
@@ -14,12 +17,23 @@ impl EventHandler for Handler {
     // Event handlers are dispatched through a threadpool, and so multiple
     // events can be dispatched simultaneously.
     async fn message(&self, ctx: Context, msg: Message) {
-        if msg.content == "!ping" {
+        if msg.content == "!get_bitcoin" {
             // Sending a message can fail, due to a network error, an
             // authentication error, or lack of permissions to post in the
             // channel, so log to stdout when some error happens, with a
             // description of it.
-            if let Err(why) = msg.channel_id.say(&ctx.http, "Pong!").await {
+            
+            
+            let binance_api_responce = binance::get_crypto_price(&"BTC").await;
+            let crypto_data = format!("{}: {}", binance_api_responce.symbol, binance_api_responce.price);
+
+            if let Err(why) = msg.channel_id.say(&ctx.http, crypto_data).await {
+                println!("Error sending message: {:?}", why);
+            }
+        }
+
+        if msg.content == "very pog" {
+            if let Err(why) = msg.channel_id.say(&ctx.http, "indeed").await {
                 println!("Error sending message: {:?}", why);
             }
         }
@@ -37,9 +51,9 @@ impl EventHandler for Handler {
 }
 
 
-pub async fn start_bot() {
+pub async fn start_bot(bot_key: &str) {
     // Configure the client with your Discord bot token in the environment.
-    let token = "MTAxNDU0MjAxMzA3MDMxOTcxNg.GDE9_N.mnlH_AmXcaGD5Y2px65wlentsZ0QadEzG1ehL4";
+    let token = bot_key;
     // Set gateway intents, which decides what events the bot will be notified about
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES

@@ -11,3 +11,4 @@ serde = { version = "1.0.126", features = ["derive"] }
 
 serenity = { default-features = false, features = ["client", "gateway", "rustls_backend", "model"] }
 tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+env-file-reader = "0.3.0"
