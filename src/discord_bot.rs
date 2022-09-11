@@ -26,8 +26,8 @@ impl EventHandler for Handler {
             println!("Running Command: !get_bitcoin");
             println!("Fetching bitcoin data...");
             
-            let binance_api_responce = binance::get_crypto_price(&"BTC").await;
-            let crypto_data = format!("{}: {}", binance_api_responce.symbol, binance_api_responce.price);
+            let binance_api_responce: binance::BinanceApiResponce = binance::get_crypto_price(&"BTC").await;
+            let crypto_data: String = format!("{}: {}", binance_api_responce.symbol, binance_api_responce.price);
 
             if let Err(why) = msg.channel_id.say(&ctx.http, &crypto_data).await {
                 println!("Error sending message: {:?}", why);
@@ -59,16 +59,16 @@ impl EventHandler for Handler {
 
 pub async fn start_bot(bot_key: &str) {
     // Configure the client with your Discord bot token in the environment.
-    let token = bot_key;
+    let token: &str = bot_key;
     // Set gateway intents, which decides what events the bot will be notified about
-    let intents = GatewayIntents::GUILD_MESSAGES
-        | GatewayIntents::DIRECT_MESSAGES
-        | GatewayIntents::MESSAGE_CONTENT;
+    let intents: GatewayIntents = GatewayIntents::GUILD_MESSAGES
+                                | GatewayIntents::DIRECT_MESSAGES
+                                | GatewayIntents::MESSAGE_CONTENT;
 
     // Create a new instance of the Client, logging in as a bot. This will
     // automatically prepend your bot token with "Bot ", which is a requirement
     // by Discord for bot users.
-    let mut client =
+    let mut client: Client =
         Client::builder(&token, intents).event_handler(Handler).await.expect("Err creating client");
 
     // Finally, start a single shard, and start listening to events.
