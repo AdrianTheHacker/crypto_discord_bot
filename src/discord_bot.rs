@@ -24,7 +24,7 @@ impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
         let env_variables: HashMap<String, String> = read_file(r".env").unwrap();
 
-        if msg.channel_id.as_ref().to_string() != env_variables["DISCORD_CHANNEL_ID"] {return;} // Locks the bot to one channel
+        if msg.channel_id.as_ref().to_string() != env_variables["WALLSTREET_CHANNEL_ID"] {return;} // Locks the bot to one channel
 
         if msg.content == "!get_bitcoin" {
             // Sending a message can fail, due to a network error, an
@@ -70,9 +70,11 @@ impl EventHandler for Handler {
 }
 
 
-pub async fn start_bot(bot_key: &str) {
+pub async fn start_bot() {
+    let env_variables: HashMap<String, String> = read_file(r".env").unwrap();
+
     // Configure the client with your Discord bot token in the environment.
-    let token: &str = bot_key;
+    let token: &str = &env_variables["DISCORD_BOT_TOKEN"];
     // Set gateway intents, which decides what events the bot will be notified about
     let intents: GatewayIntents = GatewayIntents::GUILD_MESSAGES
                                 | GatewayIntents::DIRECT_MESSAGES

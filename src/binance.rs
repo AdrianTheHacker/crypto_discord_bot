@@ -9,6 +9,9 @@ pub struct BinanceApiResponce { // Information given from binance.
 
 
 pub async fn get_crypto_price(symbol: &str) -> BinanceApiResponce {
+    // Returns the price of a given crypto currency as USDT.
+    // The price of the crypto is grabbed from api.binance.com
+
     let url: String = format!("https://api.binance.com/api/v3/ticker/price?symbol={}USDT", symbol);
     
     let binance_api_responce: BinanceApiResponce = tokio::task::spawn_blocking(move || {
